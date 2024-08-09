@@ -37,6 +37,27 @@ h1 {
   justify-content: center;
   align-items: center;
   padding: 1.2rem 0;
+  gap: 2.3rem;
+}
+.add-form button {
+  text-transform: uppercase;
+}
+.add-form select:focus,
+.add-form input:focus {
+  outline: none;
+}
+button,
+select,
+input {
+  background-color: #ffebb3;
+  color: #5a3e2b;
+  font-family: inherit;
+  padding: 1.2rem 3rem;
+  border-radius: 10rem;
+  border: none;
+  font-weight: inherit;
+  cursor: pointer;
+  font-size: 1.8rem;
 }
 
 .list {
@@ -54,6 +75,12 @@ h1 {
   gap: 1.2rem;
   justify-content: center;
   align-items: start;
+  overflow: scroll;
+}
+.list li {
+  display: flex;
+  align-items: center;
+  gap: 2.3rem;
 }
 
 .stats {
