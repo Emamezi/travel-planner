@@ -8,16 +8,35 @@ import "./App.css";
 // ];
 function App() {
   const [items, setItems] = useState([]);
+
   const handleAddItems = (item) =>
     //use callbalcks to update state based on the current state
     setItems((items) => [...items, item]);
+
+  const handleDeleteItems = (id) => {
+    //updating state based on the current state
+    setItems((items) => items.filter((item) => item.id !== id));
+    // const deletedItem = items.filter((item) => id !== item.id);
+    // setItems(deletedItem);
+  };
+  const handleToggleItem = (id) => {
+    setItems((item) =>
+      item.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  };
 
   return (
     <div className="app">
       <Logo />
       <Form onAddItems={handleAddItems} />
-      <TravelList items={items} />
-      <Footer />
+      <TravelList
+        items={items}
+        onDeleteItem={handleDeleteItems}
+        onToggleItem={handleToggleItem}
+      />
+      <Footer items={items} />
     </div>
   );
 }
@@ -80,34 +99,53 @@ const Form = ({ onAddItems }) => {
   );
 };
 
-const TravelList = ({ items }) => {
+const TravelList = ({ items, onDeleteItem, onToggleItem }) => {
   return (
     <div className="list">
       <ul>
         {items.map((item) => (
-          <Item key={item.id} item={item} />
+          <Item
+            key={item.id}
+            item={item}
+            onDeleteItem={onDeleteItem}
+            onToggleItem={onToggleItem}
+          />
         ))}
       </ul>
     </div>
   );
 };
 
-const Footer = () => {
+const Footer = ({ items }) => {
+  const numLength = items.length;
+  const packedQuantity = items.filter((item) => item.packed === true).length;
+  const packedStats = Math.floor((packedQuantity / numLength) * 100);
   return (
     <footer className="stats">
-      <em>You have X items on your lsit and have packed X (X%)</em>;
+      <em>
+        You have {numLength} items on your lsit and have packed {packedQuantity}
+        ..
+        {packedStats}%
+      </em>
+      ;
     </footer>
   );
 };
 
-const Item = ({ item }) => {
+const Item = ({ item, onDeleteItem, onToggleItem }) => {
   return (
     <li>
-      <input type="checkbox"></input>
+      <input
+        type="checkbox"
+        value={item.packed}
+        onChange={() => onToggleItem(item.id)}
+      ></input>
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
-      <button>❌</button>
+      <button className="delete-btn" onClick={() => onDeleteItem(item.id)}>
+        ❌
+      </button>
     </li>
   );
 };
