@@ -27,6 +27,13 @@ function App() {
     );
   };
 
+  const handleClearList = () => {
+    const confirmed = items.length
+      ? window.confirm("Are you sure you want to delete the list?")
+      : null;
+    confirmed && setItems([]);
+  };
+
   return (
     <div className="app">
       <Logo />
@@ -35,6 +42,7 @@ function App() {
         items={items}
         onDeleteItem={handleDeleteItems}
         onToggleItem={handleToggleItem}
+        onClearList={handleClearList}
       />
       <Footer items={items} />
     </div>
@@ -99,11 +107,25 @@ const Form = ({ onAddItems }) => {
   );
 };
 
-const TravelList = ({ items, onDeleteItem, onToggleItem }) => {
+const TravelList = ({ items, onDeleteItem, onToggleItem, onClearList }) => {
+  const [sortBy, setSortBy] = useState("input");
+
+  let sortedItems;
+  if (sortBy === "input") sortedItems = items;
+
+  if (sortBy === "description")
+    sortedItems = items
+      .slice()
+      .sort((a, b) => a.description.localeCompare(b.description)); //compare description string
+
+  if (sortBy === "packed")
+    sortedItems = items
+      .slice()
+      .sort((a, b) => Number(a.packed) - Number(b.packed)); //converting true and false to 0,1 values for sorting
   return (
     <div className="list">
       <ul>
-        {items.map((item) => (
+        {sortedItems.map((item) => (
           <Item
             key={item.id}
             item={item}
@@ -112,22 +134,36 @@ const TravelList = ({ items, onDeleteItem, onToggleItem }) => {
           />
         ))}
       </ul>
+      <div className="actions">
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="input">sort by input order</option>
+          <option value="description">sort by description</option>
+          <option value="packed">sort by packed status</option>
+        </select>
+        <button onClick={onClearList}>Clear List</button>
+      </div>
     </div>
   );
 };
 
 const Footer = ({ items }) => {
+  if (!items.length)
+    return (
+      <p className="stats">
+        <em>Start adding items to your list</em>
+      </p>
+    );
   const numLength = items.length;
   const packedQuantity = items.filter((item) => item.packed === true).length;
-  const packedStats = Math.floor((packedQuantity / numLength) * 100);
+  const packedStats = Math.floor((packedQuantity / numLength) * 100) || 0;
   return (
     <footer className="stats">
       <em>
-        You have {numLength} items on your lsit and have packed {packedQuantity}
-        ..
-        {packedStats}%
+        {packedStats === 100
+          ? "You got everything. Ready to go"
+          : `You have ${numLength} items on your lsit and have packed ${packedQuantity}
+        (${packedStats})%`}
       </em>
-      ;
     </footer>
   );
 };
