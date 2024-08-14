@@ -59,7 +59,9 @@ input {
   cursor: pointer;
   font-size: 1.8rem;
 }
-
+select:focus {
+  outline: none;
+}
 .list {
   display: flex;
   flex-direction: column;
@@ -93,4 +95,9 @@ input {
 }
 .delete-btn {
   background-color: transparent;
+}
+.actions {
+  display: flex;
+  gap: 2.3rem;
+  margin-bottom: 1.2rem;
 }
